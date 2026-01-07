@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PACE Outdoor — Plan With Confidence</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Natural outdoor palette */
+      --color-forest: #2d4a3e;
+      --color-forest-deep: #1e3329;
+      --color-pine: #3d5a4c;
+      --color-sage: #6b8f71;
+      --color-stone: #78716c;
+      --color-stone-light: #a8a29e;
+      --color-slate: #64748b;
+      --color-sky: #7c9eb2;
+      --color-cream: #faf9f6;
+      --color-warm-white: #f5f4f0;
+      --color-parchment: #edeae3;
+      --color-text: #2c2825;
+      --color-text-muted: #5c5552;
+      --color-border: #d4cfc7;
+
+      /* Typography */
+      --font-sans: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      --font-serif: Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+
+      /* Layout */
+      --max-width: 1100px;
+      --space-xs: 0.5rem;
+      --space-sm: 1rem;
+      --space-md: 2rem;
+      --space-lg: 4rem;
+      --space-xl: 6rem;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--color-cream);
+      color: var(--color-text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Topographic pattern overlay */
+    .topo-pattern {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.03;
+      z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q25 30 50 50 T100 50' fill='none' stroke='%232d4a3e' stroke-width='0.5'/%3E%3Cpath d='M0 30 Q25 10 50 30 T100 30' fill='none' stroke='%232d4a3e' stroke-width='0.5'/%3E%3Cpath d='M0 70 Q25 50 50 70 T100 70' fill='none' stroke='%232d4a3e' stroke-width='0.5'/%3E%3Cpath d='M0 90 Q25 70 50 90 T100 90' fill='none' stroke='%232d4a3e' stroke-width='0.5'/%3E%3Cpath d='M0 10 Q25 -10 50 10 T100 10' fill='none' stroke='%232d4a3e' stroke-width='0.5'/%3E%3C/svg%3E");
+    }
+
+    header {
+      padding: var(--space-sm) var(--space-md);
+      background: linear-gradient(180deg, var(--color-cream) 0%, rgba(250, 249, 246, 0.95) 100%);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(212, 207, 199, 0.6);
+    }
+
+    .header-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: var(--color-forest);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+
+    nav a {
+      color: var(--color-stone);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-left: var(--space-md);
+      transition: color 0.2s ease;
+      letter-spacing: 0.01em;
+    }
+
+    nav a:hover {
+      color: var(--color-forest);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    /* Hero with landscape gradient */
+    .hero-wrapper {
+      background: linear-gradient(
+        180deg,
+        var(--color-cream) 0%,
+        #e8ebe9 40%,
+        #dde4df 60%,
+        #c9d4cd 80%,
+        #b8c7be 100%
+      );
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-wrapper::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 120px;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 120' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'%3E%3Cpath d='M0 120 L0 60 Q150 20 300 50 T600 30 T900 55 T1200 35 L1200 120 Z' fill='%23faf9f6'/%3E%3C/svg%3E");
+      background-size: cover;
+      background-position: top center;
+    }
+
+    .hero {
+      padding: var(--space-xl) 0;
+      padding-bottom: calc(var(--space-xl) + 60px);
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-forest);
+      background: rgba(45, 74, 62, 0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 2px;
+      margin-bottom: var(--space-md);
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.25rem, 5vw, 3.25rem);
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: var(--space-md);
+      color: var(--color-forest-deep);
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-lg);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.8;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background-color: var(--color-forest);
+      color: var(--color-cream);
+      padding: 1rem 2.25rem;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 3px;
+      transition: all 0.25s ease;
+      letter-spacing: 0.02em;
+      box-shadow: 0 2px 8px rgba(45, 74, 62, 0.2);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-pine);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(45, 74, 62, 0.25);
+    }
+
+    section {
+      padding: var(--space-xl) 0;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 620px;
+      margin: 0 auto var(--space-lg);
+    }
+
+    .section-header h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.625rem, 3vw, 2.125rem);
+      font-weight: 400;
+      margin-bottom: var(--space-sm);
+      letter-spacing: -0.01em;
+      color: var(--color-forest-deep);
+    }
+
+    .section-header p {
+      color: var(--color-text-muted);
+      font-size: 1.05rem;
+      line-height: 1.75;
+    }
+
+    /* Mountain ridge divider */
+    .divider {
+      width: 80px;
+      height: 16px;
+      margin: 0 auto var(--space-md);
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 80 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 16 L15 6 L25 10 L40 2 L55 8 L65 5 L80 16 Z' fill='none' stroke='%232d4a3e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center no-repeat;
+      opacity: 0.5;
+    }
+
+    .framework-section {
+      background: var(--color-cream);
+    }
+
+    .framework-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .framework-card {
+      background: var(--color-warm-white);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 1.75rem;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .framework-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--color-forest);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .framework-card:hover {
+      border-color: var(--color-sage);
+      box-shadow: 0 4px 20px rgba(45, 74, 62, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .framework-card:hover::before {
+      opacity: 1;
+    }
+
+    .framework-card .letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-pine) 100%);
+      color: var(--color-cream);
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 1.125rem;
+      border-radius: 50%;
+      margin-bottom: var(--space-sm);
+      box-shadow: 0 2px 6px rgba(45, 74, 62, 0.2);
+    }
+
+    .framework-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 0.625rem;
+      color: var(--color-forest-deep);
+    }
+
+    .framework-card p {
+      font-size: 0.925rem;
+      color: var(--color-text-muted);
+      line-height: 1.65;
+    }
+
+    /* Why section with texture */
+    .why-section {
+      background: var(--color-parchment);
+      position: relative;
+      margin: 0;
+    }
+
+    .why-section::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+    }
+
+    .why-section::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+    }
+
+    .why-content {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: var(--space-xl) var(--space-md);
+    }
+
+    .why-content ul {
+      list-style: none;
+      margin-top: var(--space-md);
+      display: grid;
+      gap: 0.875rem;
+    }
+
+    .why-content li {
+      position: relative;
+      padding-left: 2rem;
+      color: var(--color-text);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .why-content li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      width: 10px;
+      height: 10px;
+      background: linear-gradient(135deg, var(--color-sage) 0%, var(--color-forest) 100%);
+      border-radius: 2px;
+      transform: rotate(45deg);
+    }
+
+    /* CTA section with subtle gradient */
+    .cta-section {
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+      background: linear-gradient(
+        180deg,
+        var(--color-cream) 0%,
+        var(--color-warm-white) 50%,
+        #e9e6df 100%
+      );
+      position: relative;
+    }
+
+    .cta-section h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.625rem, 3vw, 2.125rem);
+      font-weight: 400;
+      margin-bottom: var(--space-sm);
+      color: var(--color-forest-deep);
+    }
+
+    .cta-section p {
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-md);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 1.05rem;
+      line-height: 1.75;
+    }
+
+    .cta-section .btn-primary {
+      background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-forest-deep) 100%);
+    }
+
+    footer {
+      background: var(--color-forest-deep);
+      padding: var(--space-md) var(--space-md);
+      text-align: center;
+      color: var(--color-stone-light);
+      font-size: 0.875rem;
+    }
+
+    footer p {
+      opacity: 0.8;
+      letter-spacing: 0.02em;
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --space-xl: 4rem;
+        --space-lg: 3rem;
+      }
+
+      .hero {
+        padding-bottom: calc(var(--space-lg) + 40px);
+      }
+
+      .hero h1 {
+        font-size: 1.875rem;
+      }
+
+      .hero-eyebrow {
+        font-size: 0.7rem;
+      }
+
+      nav a {
+        margin-left: var(--space-sm);
+        font-size: 0.8rem;
+      }
+
+      .framework-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .framework-card {
+        padding: 1.5rem;
+      }
+
+      .why-content {
+        padding: var(--space-lg) var(--space-md);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-inner {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      nav a:first-child {
+        margin-left: 0;
+      }
+
+      .hero-eyebrow {
+        padding: 0.4rem 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topo-pattern" aria-hidden="true"></div>
+
+  <header>
+    <div class="header-inner">
+      <a href="#" class="logo">PACE Outdoor</a>
+      <nav>
+        <a href="#framework">Framework</a>
+        <a href="#why">Why It Matters</a>
+        <a href="#start">Start</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero-wrapper">
+      <div class="container">
+        <section class="hero">
+          <span class="hero-eyebrow">Planning Framework</span>
+          <h1>Thoughtful planning for every outdoor endeavor</h1>
+          <p>PACE Outdoor helps trip leaders, guides, and serious planners build resilient itineraries using the Primary, Alternate, Contingency, Emergency framework.</p>
+          <a href="#start" class="btn-primary">Start Here</a>
+        </section>
+      </div>
+    </div>
+
+    <section id="framework" class="framework-section">
+      <div class="container">
+        <div class="section-header">
+          <div class="divider"></div>
+          <h2>The PACE Framework</h2>
+          <p>A structured approach to planning that acknowledges uncertainty and prepares for it systematically.</p>
+        </div>
+
+        <div class="framework-grid">
+          <div class="framework-card">
+            <span class="letter">P</span>
+            <h3>Primary</h3>
+            <p>Your first-choice plan under normal conditions. This is the route, timing, and approach you intend to use when everything goes as expected.</p>
+          </div>
+
+          <div class="framework-card">
+            <span class="letter">A</span>
+            <h3>Alternate</h3>
+            <p>A near-equivalent option when your primary becomes unavailable. Similar effort, different path. Used when conditions shift moderately.</p>
+          </div>
+
+          <div class="framework-card">
+            <span class="letter">C</span>
+            <h3>Contingency</h3>
+            <p>A fallback for when both primary and alternate fail. Requires more compromise but keeps the trip viable and the group safe.</p>
+          </div>
+
+          <div class="framework-card">
+            <span class="letter">E</span>
+            <h3>Emergency</h3>
+            <p>The last resort. This plan prioritizes safety above all objectives. Evacuation routes, emergency contacts, and survival protocols live here.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="why" class="why-section">
+      <div class="why-content">
+        <div class="section-header">
+          <div class="divider"></div>
+          <h2>Why PACE Matters Outdoors</h2>
+          <p>The wilderness does not accommodate poor planning. Weather changes, trails close, injuries happen, and gear fails. PACE gives you a decision-making structure before stress compromises judgment.</p>
+        </div>
+
+        <ul>
+          <li>Reduces decision fatigue when conditions deteriorate</li>
+          <li>Creates shared understanding among group members</li>
+          <li>Forces honest assessment of risks during the planning phase</li>
+          <li>Provides clear escalation paths without panic</li>
+          <li>Distinguishes inconvenience from genuine emergency</li>
+          <li>Builds confidence through preparation, not optimism</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="start" class="cta-section">
+      <div class="divider"></div>
+      <h2>Ready to plan with intention?</h2>
+      <p>Begin building your first PACE plan. Start with a trip you know well, then apply the framework to new terrain.</p>
+      <a href="#" class="btn-primary">Start Your First Plan</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>PACE Outdoor. Plan well. Travel prepared.</p>
+  </footer>
+</body>
+</html>
